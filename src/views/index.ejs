@@ -1,0 +1,41 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COPSA Tutor Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the COPSA Tutor App</h1>
+        <p>Please log in using your school/work email via Google.</p>
+
+        <% if (user) { %>
+            <!-- If the user is logged in, show the dashboard link instead of login button -->
+            <p>Welcome, <%= user.displayName %>!</p>
+            <p>Your email: <%= user.email %></p>
+
+            <a href="/dashboard">
+                <button>Go to Dashboard</button>
+            </a>
+
+            <% if (isAdmin) { %>
+                <!-- Admin Dashboard Link for Admins Only -->
+                <a href="/admin">
+                    <button>Go to Admin Dashboard</button>
+                </a>
+            <% } %>
+
+            <a href="/auth/logout">
+                <button>Logout</button>
+            </a>
+        <% } else { %>
+            <a href="/auth/google">
+                <button>Login with Google</button>
+            </a>
+        <% } %>
+    </div>
+</body>
+</html>

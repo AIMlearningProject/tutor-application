@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/styles.css"> <!-- Link to your CSS -->
+</head>
+<body>
+  <header>
+    <h1>Admin Dashboard</h1>
+    <a href="/auth/logout">Logout</a>
+  </header>
+
+  <section>
+    <h2>Tutor Sessions</h2>
+
+    <!-- Success or Error Message -->
+    <% if (message) { %>
+      <div class="message">
+        <%= message %>
+      </div>
+    <% } %>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tutor Name</th>
+          <th>Date</th>
+          <th>Location</th>
+          <th>Description</th>
+          <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (tutorSessions.length > 0) { %>
+          <% tutorSessions.forEach(session => { %>
+            <tr>
+              <td><%= session.tutorName %></td>
+              <td><%= session.date %></td>
+              <td><%= session.location %></td>
+              <td><%= session.description %></td>
+              <td><%= session.duration %> hours</td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="5">No sessions logged yet.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </section>
+</body>
+</html>

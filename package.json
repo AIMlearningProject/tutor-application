@@ -1,0 +1,46 @@
+{
+  "name": "tutor-application",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "jest --verbose --coverage --forceExit",
+    "test:watch": "jest --watch",
+    "test:unit": "jest --testPathPattern=tests/unit --forceExit",
+    "test:integration": "jest --testPathPattern=tests/integration --forceExit"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/app.js",
+      "!src/locales/**"
+    ],
+    "testTimeout": 30000
+  },
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-ejs-layouts": "^2.5.1",
+    "express-handlebars": "^8.0.1",
+    "express-session": "^1.18.1",
+    "i18n": "^0.15.3",
+    "mongoose": "^8.8.3",
+    "nodemailer": "^6.9.16",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "mongodb-memory-server": "^10.3.0",
+    "supertest": "^7.1.4"
+  }
+}

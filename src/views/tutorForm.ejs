@@ -1,0 +1,48 @@
+<!-- views/tutorForm.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutor Session Log</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, <%= user.displayName %>!</h1>
+        <p>Your email: <%= user.emails[0].value %></p>
+
+        <h2>Log Your Tutoring Session</h2>
+        <form action="/tutor/log" method="POST">
+            <label for="date">Date of Session:</label>
+            <input type="date" id="date" name="date" required><br><br>
+
+            <label for="location">Location of Session:</label>
+            <input type="text" id="location" name="location" placeholder="e.g., Online, Room 101" required><br><br>
+
+            <label for="description">Session Description:</label>
+            <textarea id="description" name="description" rows="4" cols="50" placeholder="What was done during the session?" required></textarea><br><br>
+
+            <label for="duration">Session Duration (in hours):</label>
+            <input type="number" id="duration" name="duration" min="0.5" step="0.5" placeholder="e.g., 1, 1.5" required><br><br>
+
+            <button type="submit">Submit Session</button>
+        </form>
+
+        <h2>Logged Sessions</h2>
+        <ul>
+            <% tutorSessions.forEach(function(session) { %>
+                <li>
+                    <strong>Date:</strong> <%= session.date %> <br>
+                    <strong>Location:</strong> <%= session.location %> <br>
+                    <strong>Description:</strong> <%= session.description %> <br>
+                    <strong>Duration:</strong> <%= session.duration %> hours
+                </li>
+            <% }) %>
+        </ul>
+
+        <br><br>
+        <a href="/logout">Logout</a>
+    </div>
+</body>
+</html>

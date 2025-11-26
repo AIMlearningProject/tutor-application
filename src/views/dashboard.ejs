@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutor Dashboard</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Link to CSS for styling -->
+</head>
+<body>
+    <h1>Welcome, <%= user.displayName %>!</h1>
+    <p>Your email: <%= user.email %></p>
+
+    <h2>Log Your Tutoring Session</h2>
+    <form action="/tutor/log" method="POST"> <!-- Corrected action path -->
+        <label for="date">Date of Session:</label>
+        <input type="date" id="date" name="date" required>
+
+        <label for="location">Location of Session:</label>
+        <input type="text" id="location" name="location" required>
+
+        <label for="description">Session Description:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <label for="duration">Session Duration (in hours):</label>
+        <input type="number" id="duration" name="duration" required step="0.5">
+
+        <button type="submit">Submit Session</button>
+    </form>
+
+    <h2>Logged Sessions</h2>
+    <% if (tutorSessions.length > 0) { %>
+        <ul>
+            <% tutorSessions.forEach(session => { %>
+                <li><strong>Date:</strong> <%= session.date %> | <strong>Location:</strong> <%= session.location %> | <strong>Description:</strong> <%= session.description %> | <strong>Duration:</strong> <%= session.duration %> hours</li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>No sessions logged yet.</p>
+    <% } %>
+
+    <a href="/auth/logout">Logout</a>
+</body>
+</html>

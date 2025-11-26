@@ -1,0 +1,89 @@
+{
+  "app": {
+    "title": "COPSA Tutor Application"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "tutorForm": "Log Session",
+    "adminDashboard": "Admin Dashboard",
+    "logout": "Logout",
+    "login": "Login"
+  },
+  "home": {
+    "welcome": "Welcome to the COPSA Tutor App",
+    "loginPrompt": "Please log in using your school/work email via Google",
+    "loginButton": "Login with Google",
+    "welcomeBack": "Welcome, {{name}}!",
+    "yourEmail": "Your email: {{email}}",
+    "goToDashboard": "Go to Dashboard",
+    "goToAdminDashboard": "Go to Admin Dashboard"
+  },
+  "tutor": {
+    "welcome": "Welcome, {{name}}!",
+    "logSession": "Log Your Tutoring Session",
+    "dateLabel": "Date of Session:",
+    "locationLabel": "Location of Session:",
+    "locationPlaceholder": "e.g., Online, Room 101",
+    "descriptionLabel": "Session Description:",
+    "descriptionPlaceholder": "What was done during the session?",
+    "hoursLabel": "Session Duration (in hours):",
+    "hoursPlaceholder": "e.g., 1, 1.5",
+    "submitButton": "Save as Draft",
+    "submitForReview": "Submit for Review",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loggedSessions": "Logged Sessions",
+    "noSessions": "No sessions logged yet",
+    "status": "Status"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "filters": "Filters",
+    "filterByStatus": "Filter by Status",
+    "filterByTutor": "Filter by Tutor",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "applyFilters": "Apply Filters",
+    "clearFilters": "Clear Filters",
+    "exportCSV": "Export to CSV",
+    "tutorSessions": "Tutor Sessions",
+    "tutorName": "Tutor Name",
+    "email": "Email",
+    "date": "Date",
+    "location": "Location",
+    "description": "Description",
+    "hours": "Hours",
+    "status": "Status",
+    "actions": "Actions",
+    "approve": "Approve",
+    "reject": "Reject",
+    "viewDetails": "View Details",
+    "noSessions": "No sessions found",
+    "reviewNote": "Review Note (Optional)",
+    "reviewNotePlaceholder": "Add a note about your decision...",
+    "statistics": "Statistics",
+    "totalHours": "Total Hours Logged",
+    "hoursByTutor": "Hours by Tutor",
+    "sessionsByStatus": "Sessions by Status"
+  },
+  "status": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  },
+  "messages": {
+    "success": "Success!",
+    "error": "Error!",
+    "confirmDelete": "Are you sure you want to delete this session?",
+    "confirmSubmit": "Are you sure you want to submit this session for review? You won't be able to edit it afterwards."
+  },
+  "errors": {
+    "accessDenied": "Access denied. You don't have permission to view this page.",
+    "sessionNotFound": "Session not found",
+    "generalError": "An error occurred. Please try again."
+  },
+  "footer": {
+    "poweredBy": "Powered by COPSA & Centria University of Applied Sciences"
+  }
+}
