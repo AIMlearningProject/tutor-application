@@ -1,0 +1,89 @@
+{
+  "app": {
+    "title": "COPSA Tutorisovellus"
+  },
+  "nav": {
+    "dashboard": "Hallintapaneeli",
+    "tutorForm": "Kirjaa Istunto",
+    "adminDashboard": "Ylläpitäjän Paneeli",
+    "logout": "Kirjaudu Ulos",
+    "login": "Kirjaudu Sisään"
+  },
+  "home": {
+    "welcome": "Tervetuloa COPSA Tutorisovellukseen",
+    "loginPrompt": "Kirjaudu sisään koulu/työ sähköpostillasi Googlen kautta",
+    "loginButton": "Kirjaudu Googlella",
+    "welcomeBack": "Tervetuloa, {{name}}!",
+    "yourEmail": "Sähköpostisi: {{email}}",
+    "goToDashboard": "Siirry Hallintapaneeliin",
+    "goToAdminDashboard": "Siirry Ylläpitäjän Paneeliin"
+  },
+  "tutor": {
+    "welcome": "Tervetuloa, {{name}}!",
+    "logSession": "Kirjaa Ohjausistunto",
+    "dateLabel": "Istunnon Päivämäärä:",
+    "locationLabel": "Istunnon Sijainti:",
+    "locationPlaceholder": "esim., Verkossa, Huone 101",
+    "descriptionLabel": "Istunnon Kuvaus:",
+    "descriptionPlaceholder": "Mitä istunnossa tehtiin?",
+    "hoursLabel": "Istunnon Kesto (tunteina):",
+    "hoursPlaceholder": "esim., 1, 1.5",
+    "submitButton": "Tallenna Luonnoksena",
+    "submitForReview": "Lähetä Tarkistettavaksi",
+    "edit": "Muokkaa",
+    "delete": "Poista",
+    "loggedSessions": "Kirjatut Istunnot",
+    "noSessions": "Ei vielä kirjattuja istuntoja",
+    "status": "Tila"
+  },
+  "admin": {
+    "title": "Ylläpitäjän Paneeli",
+    "filters": "Suodattimet",
+    "filterByStatus": "Suodata Tilan Mukaan",
+    "filterByTutor": "Suodata Tutorin Mukaan",
+    "startDate": "Alkupäivä",
+    "endDate": "Loppupäivä",
+    "applyFilters": "Käytä Suodattimia",
+    "clearFilters": "Tyhjennä Suodattimet",
+    "exportCSV": "Vie CSV-muodossa",
+    "tutorSessions": "Tutoriistunnot",
+    "tutorName": "Tutorin Nimi",
+    "email": "Sähköposti",
+    "date": "Päivämäärä",
+    "location": "Sijainti",
+    "description": "Kuvaus",
+    "hours": "Tunnit",
+    "status": "Tila",
+    "actions": "Toiminnot",
+    "approve": "Hyväksy",
+    "reject": "Hylkää",
+    "viewDetails": "Näytä Tiedot",
+    "noSessions": "Istuntoja ei löytynyt",
+    "reviewNote": "Tarkistusmuistiinpano (Valinnainen)",
+    "reviewNotePlaceholder": "Lisää muistiinpano päätöksestäsi...",
+    "statistics": "Tilastot",
+    "totalHours": "Yhteensä Kirjattuja Tunteja",
+    "hoursByTutor": "Tunnit Tutorin Mukaan",
+    "sessionsByStatus": "Istunnot Tilan Mukaan"
+  },
+  "status": {
+    "draft": "Luonnos",
+    "submitted": "Lähetetty",
+    "approved": "Hyväksytty",
+    "rejected": "Hylätty"
+  },
+  "messages": {
+    "success": "Onnistui!",
+    "error": "Virhe!",
+    "confirmDelete": "Haluatko varmasti poistaa tämän istunnon?",
+    "confirmSubmit": "Haluatko varmasti lähettää tämän istunnon tarkistettavaksi? Et voi muokata sitä sen jälkeen."
+  },
+  "errors": {
+    "accessDenied": "Pääsy evätty. Sinulla ei ole oikeutta nähdä tätä sivua.",
+    "sessionNotFound": "Istuntoa ei löytynyt",
+    "generalError": "Tapahtui virhe. Yritä uudelleen."
+  },
+  "footer": {
+    "poweredBy": "Voimanlähteenä COPSA & Centria-ammattikorkeakoulu"
+  }
+}
