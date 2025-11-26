@@ -1,6 +1,7 @@
 // src/models/TutorSession.js
 const mongoose = require('mongoose');
 
+<<<<<<< HEAD
 // Define the schema for tutor sessions according to the software plan
 const tutorSessionSchema = new mongoose.Schema({
   user_id: {
@@ -8,26 +9,39 @@ const tutorSessionSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+=======
+// Define the schema for tutor sessions
+const tutorSessionSchema = new mongoose.Schema({
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
   tutorName: {
     type: String,
     required: true,
   },
+<<<<<<< HEAD
   tutorEmail: {
     type: String,
     required: true,
   },
   date: {
     type: Date,
+=======
+  date: {
+    type: String,
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
     required: true,
   },
   location: {
     type: String,
     required: true,
+<<<<<<< HEAD
     trim: true,
+=======
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
   },
   description: {
     type: String,
     required: true,
+<<<<<<< HEAD
     trim: true,
   },
   hours: {
@@ -83,6 +97,15 @@ tutorSessionSchema.pre('save', function(next) {
 // Index for efficient queries
 tutorSessionSchema.index({ user_id: 1, status: 1, date: -1 });
 
+=======
+  },
+  duration: {
+    type: Number, // in hours
+    required: true,
+  },
+});
+
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
 const TutorSession = mongoose.model('TutorSession', tutorSessionSchema);
 
 module.exports = TutorSession;

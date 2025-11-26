@@ -3,6 +3,7 @@ const path = require('path');
 const passport = require('passport');
 const session = require('express-session');
 const mongoose = require('mongoose');
+<<<<<<< HEAD
 const i18n = require('i18n');
 require('dotenv').config();
 
@@ -11,18 +12,27 @@ const User = require('./models/User');
 const TutorSession = require('./models/TutorSession');
 const AdminReviewLog = require('./models/AdminReviewLog');
 
+=======
+require('dotenv').config();
+
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const tutorRoutes = require('./routes/tutorRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+<<<<<<< HEAD
 
 // Import middleware
 const { attachUserRole } = require('./middleware/auth');
+=======
+const TutorSession = require('./models/TutorSession');
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
 
 // Initialize app
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+<<<<<<< HEAD
 // Configure i18n
 i18n.configure({
   locales: ['en', 'fi'],
@@ -36,6 +46,8 @@ i18n.configure({
   objectNotation: true
 });
 
+=======
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
 // Middleware to parse incoming request bodies
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -43,6 +55,7 @@ app.use(express.json());
 // Middleware to serve static files (like CSS)
 app.use(express.static(path.join(__dirname, 'public')));
 
+<<<<<<< HEAD
 // Middleware for session handling with secure configuration
 if (!process.env.SESSION_SECRET) {
   console.error('CRITICAL: SESSION_SECRET environment variable is not set!');
@@ -58,12 +71,20 @@ app.use(session({
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
+=======
+// Middleware for session handling
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your_secret_key',
+  resave: false,
+  saveUninitialized: true
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
 }));
 
 // Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
 
+<<<<<<< HEAD
 // Initialize i18n middleware
 app.use(i18n.init);
 
@@ -80,6 +101,8 @@ app.use((req, res, next) => {
 // Attach user role middleware to all routes
 app.use(attachUserRole);
 
+=======
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
 // Use the routes
 app.use('/auth', authRoutes);
 app.use('/tutor', tutorRoutes);
@@ -95,6 +118,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+<<<<<<< HEAD
   callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/auth/google/callback',
 },
 async (accessToken, refreshToken, profile, done) => {
@@ -141,6 +165,20 @@ passport.deserializeUser(async (id, done) => {
   } catch (error) {
     done(error, null);
   }
+=======
+  callbackURL: 'http://localhost:3000/auth/google/callback',
+},
+(accessToken, refreshToken, profile, done) => {
+  return done(null, profile);
+}));
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
 });
 
 // Connect to MongoDB
@@ -160,7 +198,12 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // Define the route for root "/"
 app.get('/', (req, res) => {
+<<<<<<< HEAD
   res.render('index');
+=======
+  const isAdmin = req.user && req.user.email === process.env.ADMIN_EMAIL;
+  res.render('index', { user: req.user, isAdmin });
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
 });
 
 // Define the route for /dashboard
@@ -171,6 +214,7 @@ app.get('/dashboard', async (req, res) => {
 
   try {
     let tutorSessions;
+<<<<<<< HEAD
     if (req.user.role === 'admin') {
       // Admin user can see all tutor sessions
       tutorSessions = await TutorSession.find().sort({ date: -1 });
@@ -207,6 +251,20 @@ app.get('/language/:lang', (req, res) => {
     }
   } else {
     res.redirect('back');
+=======
+    if (req.user.email === process.env.ADMIN_EMAIL) {
+      // Admin user can see all tutor sessions
+      tutorSessions = await TutorSession.find();
+    } else {
+      // Regular user can only see their own tutor sessions
+      tutorSessions = await TutorSession.find({ tutorName: req.user.displayName });
+    }
+
+    res.render('dashboard', { user: req.user, tutorSessions });
+  } catch (error) {
+    console.error('Error retrieving tutor sessions:', error);
+    res.render('dashboard', { user: req.user, tutorSessions: [] });
+>>>>>>> 45e40af45cddae03539a08afea6bddefc54cef02
   }
 });
 
