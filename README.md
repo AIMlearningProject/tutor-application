@@ -424,7 +424,6 @@ ISC
 For issues, questions, or contributions, please:
 - Open an issue in the repository
 - Contact the development team
-- Refer to `softwareplan.md` for design decisions
 
 ## Acknowledgments
 
