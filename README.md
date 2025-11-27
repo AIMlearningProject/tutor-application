@@ -32,7 +32,7 @@ Administrators can:
 
 ## Technology Stack
 
-- **Backend**: Node.js with Express.js
+- **Backend**: Node.js with Express.js-
 - **Database**: MongoDB with Mongoose ODM
 - **Authentication**: Passport.js with Google OAuth 2.0
 - **Templating**: EJS (Embedded JavaScript)
