@@ -494,4 +494,3 @@ For issues, questions, or contributions, please:
 - **COPSA** - Community Peer Support Association
 - **Centria University of Applied Sciences**
 - All tutors and administrators using this application
->>>>>>> 146b61a (Initial project push)
