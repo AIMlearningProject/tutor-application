@@ -656,9 +656,9 @@ describe('Admin Routes Integration Tests', () => {
 
       const response = await request(app).get('/admin/stats').set('x-test-user-id', adminUser._id);
 
-      // calculateStats catches errors and returns null, so response is 200 with null
+      // calculateStats catches errors and returns default object, so response is 200 with default stats
       expect(response.status).toBe(200);
-      expect(response.body).toBeNull();
+      expect(response.body).toEqual({ total: 0, pending: 0, approved: 0, rejected: 0, draft: 0 });
       TutorSession.aggregate.mockRestore();
     });
 
@@ -1045,6 +1045,185 @@ describe('Admin Routes Integration Tests', () => {
       expect(response.status).toBe(200);
       expect(response.text).toContain('"Test, User"');
       expect(response.text).toContain('"Library ""Main"""');
+    });
+  });
+
+  describe('POST /admin/session/:id/delete', () => {
+    it('should delete session successfully', async () => {
+      const session = await TutorSession.create({
+        user_id: tutorUser._id,
+        tutorName: 'Test User',
+        tutorEmail: 'test@example.com',
+        date: new Date('2024-01-15'),
+        location: 'Library',
+        description: 'Session to delete',
+        hours: 2,
+        status: 'draft',
+      });
+
+      const response = await request(app)
+        .post(`/admin/session/${session._id}/delete`)
+        .set('x-test-user-id', adminUser._id);
+
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toBe('/admin/dashboard');
+
+      const deletedSession = await TutorSession.findById(session._id);
+      expect(deletedSession).toBeNull();
+    });
+
+    it('should handle delete errors gracefully', async () => {
+      const response = await request(app)
+        .post('/admin/session/invalid-id/delete')
+        .set('x-test-user-id', adminUser._id);
+
+      expect(response.status).toBe(302);
+    });
+  });
+
+  describe('GET /admin/session/:id/edit', () => {
+    it('should render edit session form', async () => {
+      const session = await TutorSession.create({
+        user_id: tutorUser._id,
+        tutorName: 'Test User',
+        tutorEmail: 'test@example.com',
+        date: new Date('2024-01-15'),
+        location: 'Library',
+        description: 'Session to edit',
+        hours: 2,
+        status: 'draft',
+      });
+
+      const response = await request(app)
+        .get(`/admin/session/${session._id}/edit`)
+        .set('x-test-user-id', adminUser._id);
+
+      expect(response.status).toBe(200);
+      expect(response.text).toContain('Edit Session');
+      expect(response.text).toContain('Test User');
+    });
+
+    it('should redirect if session not found', async () => {
+      const response = await request(app)
+        .get('/admin/session/507f1f77bcf86cd799439011/edit')
+        .set('x-test-user-id', adminUser._id);
+
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toBe('/admin/dashboard');
+    });
+
+    it('should handle database errors gracefully', async () => {
+      const response = await request(app)
+        .get('/admin/session/invalid-id-format/edit')
+        .set('x-test-user-id', adminUser._id);
+
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toBe('/admin/dashboard');
+    });
+  });
+
+  describe('POST /admin/session/:id/update', () => {
+    it('should update session successfully', async () => {
+      const session = await TutorSession.create({
+        user_id: tutorUser._id,
+        tutorName: 'Old Name',
+        tutorEmail: 'test@example.com',
+        date: new Date('2024-01-15'),
+        location: 'Old Location',
+        description: 'Old description',
+        hours: 2,
+        status: 'draft',
+      });
+
+      const response = await request(app)
+        .post(`/admin/session/${session._id}/update`)
+        .set('x-test-user-id', adminUser._id)
+        .send({
+          tutorName: 'Updated Name',
+          date: '2024-01-20',
+          location: 'Updated Location',
+          description: 'Updated description',
+          hours: 3,
+          status: 'submitted',
+        });
+
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toBe('/admin/dashboard');
+
+      const updatedSession = await TutorSession.findById(session._id);
+      expect(updatedSession.tutorName).toBe('Updated Name');
+      expect(updatedSession.hours).toBe(3);
+      expect(updatedSession.status).toBe('submitted');
+    });
+
+    it('should handle update errors gracefully', async () => {
+      const response = await request(app)
+        .post('/admin/session/invalid-id/update')
+        .set('x-test-user-id', adminUser._id)
+        .send({
+          tutorName: 'Test',
+          date: '2024-01-20',
+          location: 'Test',
+          description: 'Test',
+          hours: 2,
+          status: 'draft',
+        });
+
+      expect(response.status).toBe(302);
+    });
+  });
+
+  describe('GET /admin/settings', () => {
+    it('should render settings page', async () => {
+      const response = await request(app)
+        .get('/admin/settings')
+        .set('x-test-user-id', adminUser._id);
+
+      expect(response.status).toBe(200);
+      expect(response.text).toContain('Settings');
+    });
+
+    it('should block non-admin users', async () => {
+      const response = await request(app)
+        .get('/admin/settings')
+        .set('x-test-user-id', tutorUser._id);
+
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toBe('/');
+    });
+  });
+
+  describe('GET /admin/users', () => {
+    it('should render users page with all users', async () => {
+      const response = await request(app).get('/admin/users').set('x-test-user-id', adminUser._id);
+
+      expect(response.status).toBe(200);
+      expect(response.text).toContain('User Management');
+      expect(response.text).toContain('Admin User');
+      expect(response.text).toContain('Tutor User');
+    });
+
+    it('should block non-admin users', async () => {
+      const response = await request(app).get('/admin/users').set('x-test-user-id', tutorUser._id);
+
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toBe('/');
+    });
+
+    it('should handle database errors and render error page', async () => {
+      // Mock User.find to throw error
+      const originalFind = User.find;
+      User.find = jest.fn().mockImplementation(() => ({
+        sort: jest.fn().mockRejectedValue(new Error('Database connection failed')),
+      }));
+
+      const response = await request(app).get('/admin/users').set('x-test-user-id', adminUser._id);
+
+      expect(response.status).toBe(200);
+      expect(response.text).toContain('Error loading users');
+
+      // Restore
+      User.find = originalFind;
     });
   });
 });
