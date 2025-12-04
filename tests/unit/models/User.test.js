@@ -8,6 +8,11 @@ const User = require('../../../src/models/User');
 require('../../setup');
 
 describe('User Model Tests', () => {
+  beforeAll(async () => {
+    // Ensure indexes are created
+    await User.init();
+  });
+
   describe('User Schema Validation', () => {
     test('should create a valid user successfully', async () => {
       const validUser = {
@@ -15,7 +20,7 @@ describe('User Model Tests', () => {
         name: 'John Doe',
         email: 'john.doe@example.com',
         role: 'tutor',
-        language_preference: 'en'
+        language_preference: 'en',
       };
 
       const user = new User(validUser);
@@ -35,7 +40,7 @@ describe('User Model Tests', () => {
       const minimalUser = {
         googleId: 'google789',
         name: 'Jane Smith',
-        email: 'jane.smith@example.com'
+        email: 'jane.smith@example.com',
       };
 
       const user = new User(minimalUser);
@@ -48,7 +53,7 @@ describe('User Model Tests', () => {
     test('should fail to create user without required googleId', async () => {
       const userWithoutGoogleId = {
         name: 'Test User',
-        email: 'test@example.com'
+        email: 'test@example.com',
       };
 
       let error;
@@ -67,7 +72,7 @@ describe('User Model Tests', () => {
     test('should fail to create user without required name', async () => {
       const userWithoutName = {
         googleId: 'google456',
-        email: 'test@example.com'
+        email: 'test@example.com',
       };
 
       let error;
@@ -86,7 +91,7 @@ describe('User Model Tests', () => {
     test('should fail to create user without required email', async () => {
       const userWithoutEmail = {
         googleId: 'google789',
-        name: 'Test User'
+        name: 'Test User',
       };
 
       let error;
@@ -106,14 +111,14 @@ describe('User Model Tests', () => {
       const user1 = new User({
         googleId: 'unique123',
         name: 'User One',
-        email: 'user1@example.com'
+        email: 'user1@example.com',
       });
       await user1.save();
 
       const user2 = new User({
         googleId: 'unique123', // duplicate
         name: 'User Two',
-        email: 'user2@example.com'
+        email: 'user2@example.com',
       });
 
       let error;
@@ -131,14 +136,14 @@ describe('User Model Tests', () => {
       const user1 = new User({
         googleId: 'google111',
         name: 'User One',
-        email: 'same@example.com'
+        email: 'same@example.com',
       });
       await user1.save();
 
       const user2 = new User({
         googleId: 'google222',
         name: 'User Two',
-        email: 'same@example.com' // duplicate
+        email: 'same@example.com', // duplicate
       });
 
       let error;
@@ -156,7 +161,7 @@ describe('User Model Tests', () => {
       const user = new User({
         googleId: 'google333',
         name: 'Test User',
-        email: 'TEST@EXAMPLE.COM'
+        email: 'TEST@EXAMPLE.COM',
       });
 
       const savedUser = await user.save();
@@ -167,7 +172,7 @@ describe('User Model Tests', () => {
       const user = new User({
         googleId: 'google444',
         name: 'Test User',
-        email: '  test@example.com  '
+        email: '  test@example.com  ',
       });
 
       const savedUser = await user.save();
@@ -179,7 +184,7 @@ describe('User Model Tests', () => {
         googleId: 'google555',
         name: 'Test User',
         email: 'test@example.com',
-        role: 'invalid_role'
+        role: 'invalid_role',
       };
 
       let error;
@@ -199,7 +204,7 @@ describe('User Model Tests', () => {
         googleId: 'google666',
         name: 'Tutor User',
         email: 'tutor@example.com',
-        role: 'tutor'
+        role: 'tutor',
       });
 
       const savedUser = await user.save();
@@ -211,7 +216,7 @@ describe('User Model Tests', () => {
         googleId: 'google777',
         name: 'Admin User',
         email: 'admin@example.com',
-        role: 'admin'
+        role: 'admin',
       });
 
       const savedUser = await user.save();
@@ -223,7 +228,7 @@ describe('User Model Tests', () => {
         googleId: 'google888',
         name: 'Test User',
         email: 'test@example.com',
-        language_preference: 'invalid_lang'
+        language_preference: 'invalid_lang',
       };
 
       let error;
@@ -243,7 +248,7 @@ describe('User Model Tests', () => {
         googleId: 'google999',
         name: 'English User',
         email: 'english@example.com',
-        language_preference: 'en'
+        language_preference: 'en',
       });
 
       const savedUser = await user.save();
@@ -255,7 +260,7 @@ describe('User Model Tests', () => {
         googleId: 'google000',
         name: 'Finnish User',
         email: 'finnish@example.com',
-        language_preference: 'fi'
+        language_preference: 'fi',
       });
 
       const savedUser = await user.save();
@@ -268,14 +273,14 @@ describe('User Model Tests', () => {
       const user = new User({
         googleId: 'google_hook1',
         name: 'Hook Test',
-        email: 'hook@example.com'
+        email: 'hook@example.com',
       });
 
       const savedUser = await user.save();
       const initialUpdatedAt = savedUser.updated_at;
 
       // Wait a bit and update
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
       savedUser.name = 'Updated Name';
       const updatedUser = await savedUser.save();
 
@@ -286,7 +291,7 @@ describe('User Model Tests', () => {
       const user = new User({
         googleId: 'google_hook2',
         name: 'Created Test',
-        email: 'created@example.com'
+        email: 'created@example.com',
       });
 
       const savedUser = await user.save();

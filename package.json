@@ -7,7 +7,17 @@
     "test": "jest --verbose --coverage --forceExit",
     "test:watch": "jest --watch",
     "test:unit": "jest --testPathPattern=tests/unit --forceExit",
-    "test:integration": "jest --testPathPattern=tests/integration --forceExit"
+    "test:integration": "jest --testPathPattern=tests/integration --forceExit",
+    "lint": "eslint src/ tests/ --fix",
+    "lint:check": "eslint src/ tests/",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,json,md}\"",
+    "prepare": "husky",
+    "seed": "node scripts/seedDatabase.js",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
   },
   "jest": {
     "testEnvironment": "node",
@@ -25,22 +35,45 @@
     "testTimeout": 30000
   },
   "license": "ISC",
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.21.1",
     "express-ejs-layouts": "^2.5.1",
     "express-handlebars": "^8.0.1",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^8.2.1",
     "express-session": "^1.18.1",
+    "helmet": "^8.1.0",
+    "hpp": "^0.2.3",
     "i18n": "^0.15.3",
     "mongoose": "^8.8.3",
-    "nodemailer": "^6.9.16",
+    "nodemailer": "^7.0.11",
     "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "winston": "^3.18.3",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jest": "^29.2.1",
+    "eslint-plugin-prettier": "^5.5.4",
+    "husky": "^9.1.7",
     "jest": "^30.2.0",
+    "lint-staged": "^16.2.7",
     "mongodb-memory-server": "^10.3.0",
+    "prettier": "^3.7.3",
     "supertest": "^7.1.4"
   }
 }

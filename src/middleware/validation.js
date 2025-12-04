@@ -16,10 +16,10 @@ function validateTutorSession(req, res, next) {
     if (isNaN(sessionDate.getTime())) {
       errors.push('Invalid date format');
     }
-    // Check if date is not in the future (more than 1 day ahead)
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    if (sessionDate > tomorrow) {
+    // Check if date is not in the future
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // End of today
+    if (sessionDate > today) {
       errors.push('Date cannot be in the future');
     }
   }
@@ -54,10 +54,9 @@ function validateTutorSession(req, res, next) {
     errors.push('Hours must be in increments of 0.5 (e.g., 0.5, 1.0, 1.5)');
   }
 
-  // If there are errors, redirect back with error messages
+  // If there are errors, return 400 status
   if (errors.length > 0) {
-    req.session.errors = errors;
-    return res.redirect('/tutor');
+    return res.status(400).json({ errors });
   }
 
   // Sanitize inputs
@@ -85,10 +84,9 @@ function validateAdminReview(req, res, next) {
     errors.push('Review note must not exceed 1000 characters');
   }
 
-  // If there are errors, return them
+  // If there are errors, return 400 status
   if (errors.length > 0) {
-    req.session.errors = errors;
-    return res.redirect('back');
+    return res.status(400).json({ errors });
   }
 
   // Sanitize note
@@ -101,5 +99,5 @@ function validateAdminReview(req, res, next) {
 
 module.exports = {
   validateTutorSession,
-  validateAdminReview
+  validateAdminReview,
 };

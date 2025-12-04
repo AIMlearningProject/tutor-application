@@ -37,11 +37,11 @@ const userSchema = new mongoose.Schema({
   updated_at: {
     type: Date,
     default: Date.now,
-  }
+  },
 });
 
 // Update the updated_at timestamp before saving
-userSchema.pre('save', function(next) {
+userSchema.pre('save', function (next) {
   this.updated_at = Date.now();
   next();
 });

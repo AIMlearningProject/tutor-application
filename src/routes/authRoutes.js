@@ -7,16 +7,17 @@ const router = express.Router();
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Callback route after Google authentication
-router.get('/google/callback', 
+router.get(
+  '/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
     res.redirect('/tutor');
-  }
+  },
 );
 
 // Route to log out
 router.get('/logout', (req, res) => {
-  req.logout((err) => {
+  req.logout((_err) => {
     res.redirect('/');
   });
 });

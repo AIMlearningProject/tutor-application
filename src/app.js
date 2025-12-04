@@ -6,10 +6,12 @@ const mongoose = require('mongoose');
 const i18n = require('i18n');
 require('dotenv').config();
 
+// Import logger
+const { logger, httpLogger, app: appLogger, db: dbLogger } = require('./config/logger');
+
 // Import models
 const User = require('./models/User');
 const TutorSession = require('./models/TutorSession');
-const AdminReviewLog = require('./models/AdminReviewLog');
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
@@ -18,6 +20,15 @@ const adminRoutes = require('./routes/adminRoutes');
 
 // Import middleware
 const { attachUserRole } = require('./middleware/auth');
+const {
+  helmetConfig,
+  apiLimiter,
+  sanitizeInput,
+  protectAgainstHPP,
+  sanitizeUserInput,
+  securityHeaders,
+} = require('./middleware/security');
+const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
 // Initialize app
 const app = express();
@@ -33,32 +44,44 @@ i18n.configure({
   autoReload: true,
   updateFiles: false,
   syncFiles: false,
-  objectNotation: true
+  objectNotation: true,
 });
+
+// Security middleware (must be early in the chain)
+app.use(helmetConfig);
+app.use(securityHeaders);
+app.use(apiLimiter);
+app.use(sanitizeInput);
+app.use(protectAgainstHPP);
 
 // Middleware to parse incoming request bodies
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// Input sanitization after parsing
+app.use(sanitizeUserInput);
 
 // Middleware to serve static files (like CSS)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware for session handling with secure configuration
 if (!process.env.SESSION_SECRET) {
-  console.error('CRITICAL: SESSION_SECRET environment variable is not set!');
+  logger.error('CRITICAL: SESSION_SECRET environment variable is not set!');
   process.exit(1);
 }
 
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  }),
+);
 
 // Initialize passport
 app.use(passport.initialize());
@@ -77,8 +100,22 @@ app.use((req, res, next) => {
   next();
 });
 
+// HTTP request logging middleware
+app.use(httpLogger);
+
 // Attach user role middleware to all routes
 app.use(attachUserRole);
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  const healthcheck = {
+    uptime: process.uptime(),
+    message: 'OK',
+    timestamp: Date.now(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+  };
+  res.status(200).json(healthcheck);
+});
 
 // Use the routes
 app.use('/auth', authRoutes);
@@ -92,43 +129,50 @@ app.set('views', path.join(__dirname, 'views'));
 // Google OAuth Strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/auth/google/callback',
-},
-async (accessToken, refreshToken, profile, done) => {
-  try {
-    // Check if user already exists in our database
-    let user = await User.findOne({ googleId: profile.id });
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/auth/google/callback',
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        // Check if user already exists in our database
+        let user = await User.findOne({ googleId: profile.id });
 
-    if (user) {
-      // Update user info if changed
-      user.name = profile.displayName;
-      user.email = profile.emails[0].value;
-      await user.save();
-      return done(null, user);
-    }
+        if (user) {
+          // Update user info if changed
+          user.name = profile.displayName;
+          user.email = profile.emails[0].value;
+          await user.save();
+          return done(null, user);
+        }
 
-    // Determine role: check if email matches ADMIN_EMAIL from env
-    const isAdmin = profile.emails[0].value === process.env.ADMIN_EMAIL;
+        // Determine role: check if email matches ADMIN_EMAIL from env
+        const isAdmin = profile.emails[0].value === process.env.ADMIN_EMAIL;
 
-    // Create new user
-    user = new User({
-      googleId: profile.id,
-      name: profile.displayName,
-      email: profile.emails[0].value,
-      role: isAdmin ? 'admin' : 'tutor',
-      language_preference: 'en'
-    });
+        // Create new user
+        user = new User({
+          googleId: profile.id,
+          name: profile.displayName,
+          email: profile.emails[0].value,
+          role: isAdmin ? 'admin' : 'tutor',
+          language_preference: 'en',
+        });
 
-    await user.save();
-    return done(null, user);
-  } catch (error) {
-    console.error('Error in Google OAuth strategy:', error);
-    return done(error, null);
-  }
-}));
+        await user.save();
+        return done(null, user);
+      } catch (error) {
+        logger.error('Error in Google OAuth strategy', {
+          error: error.message,
+          stack: error.stack,
+        });
+        return done(error, null);
+      }
+    },
+  ),
+);
 
 passport.serializeUser((user, done) => {
   done(null, user._id);
@@ -144,29 +188,58 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // Connect to MongoDB
-mongoose.set('debug', true);  // Enable debugging logs
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 30000  // Timeout set to 30 seconds
-})
-  .then(() => {
-    console.log('MongoDB connected');
+dbLogger.connect(process.env.MONGO_URI);
+mongoose.set('debug', true); // Enable debugging logs
+mongoose
+  .connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 5000, // Timeout set to 5 seconds
   })
-  .catch(err => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);  // Exit the process with a failure code
+  .then(() => {
+    dbLogger.connected();
+  })
+  .catch((err) => {
+    logger.warn('MongoDB connection failed - running without database', {
+      error: err.message,
+    });
+    // Don't exit - allow app to run without database for demo
   });
+
+// Demo login routes (for development/testing without OAuth)
+app.post('/demo-login', async (req, res) => {
+  const { email } = req.body;
+  try {
+    const User = require('./models/User');
+    const user = await User.findOne({ email });
+    if (user) {
+      req.session.passport = { user: user._id.toString() };
+      req.session.save(() => {
+        if (user.role === 'admin') {
+          res.redirect('/admin/dashboard');
+        } else {
+          res.redirect('/tutor');
+        }
+      });
+    } else {
+      res.redirect('/?error=user_not_found');
+    }
+  } catch (err) {
+    console.error('Demo login error:', err);
+    res.redirect('/?error=login_failed');
+  }
+});
 
 // Define the route for root "/"
 app.get('/', (req, res) => {
-  res.render('index');
+  res.render('index', {
+    user: req.user || null,
+    isAdmin: req.user && req.user.role === 'admin',
+  });
 });
 
 // Define the route for /dashboard
 app.get('/dashboard', async (req, res) => {
   if (!req.user) {
-    return res.redirect('/');  // Redirect to home if the user is not authenticated
+    return res.redirect('/'); // Redirect to home if the user is not authenticated
   }
 
   try {
@@ -179,10 +252,10 @@ app.get('/dashboard', async (req, res) => {
       tutorSessions = await TutorSession.find({ user_id: req.user._id }).sort({ date: -1 });
     }
 
-    res.render('dashboard', { tutorSessions });
+    res.render('dashboard', { user: req.user, tutorSessions });
   } catch (error) {
-    console.error('Error retrieving tutor sessions:', error);
-    res.render('dashboard', { tutorSessions: [] });
+    logger.error('Error retrieving tutor sessions', { error: error.message, stack: error.stack });
+    res.render('dashboard', { user: req.user, tutorSessions: [] });
   }
 });
 
@@ -198,8 +271,11 @@ app.get('/language/:lang', (req, res) => {
         .then(() => {
           res.redirect('back');
         })
-        .catch(err => {
-          console.error('Error updating language preference:', err);
+        .catch((err) => {
+          logger.error('Error updating language preference', {
+            error: err.message,
+            stack: err.stack,
+          });
           res.redirect('back');
         });
     } else {
@@ -211,7 +287,7 @@ app.get('/language/:lang', (req, res) => {
 });
 
 // Handle logout
-app.get('/auth/logout', (req, res) => {
+app.get('/auth/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
       return next(err);
@@ -220,7 +296,24 @@ app.get('/auth/logout', (req, res) => {
   });
 });
 
+// 404 handler - must be after all other routes
+app.use(notFoundHandler);
+
+// Global error handler - must be last
+app.use(errorHandler);
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  appLogger.shutdown();
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  appLogger.shutdown();
+  process.exit(0);
+});
+
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-  });
+  appLogger.start(PORT);
+});

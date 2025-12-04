@@ -1,0 +1,114 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# Test coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Build outputs
+dist/
+build/
+.cache/
+out/
+.next/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.backup
+*.old
+
+# OS files
+Thumbs.db
+.DS_Store
+Desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Claude configuration (keep local settings private)
+.claude/settings.local.json
+
+# MongoDB data (if running locally)
+data/
+*.db
+
+# PM2
+.pm2/
+ecosystem.config.js
+
+# Session files
+sessions/
+*.sess
+
+# Security and secrets
+*.pem
+*.key
+*.cert
+*.crt
+credentials.json
+secrets.json
+
+# Test files
+test-*.txt
+*.test.local.js
+
+# Screenshots and media
+screenshots/
+*.png
+*.jpg
+*.jpeg
+*.gif
+!public/**/*.png
+!public/**/*.jpg
+!public/**/*.jpeg
+!public/**/*.gif
+
+# Demo and development files
+demo-*.js
+*-demo.js

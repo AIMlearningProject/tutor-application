@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Session - COPSA Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 2em;
+    }
+
+    .breadcrumb {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 0.9em;
+    }
+
+    .breadcrumb a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #d0d0d0;
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .info-box {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid #667eea;
+    }
+
+    .info-box p {
+      margin: 5px 0;
+      color: #666;
+    }
+
+    .info-box strong {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="/admin/dashboard">← Back to Dashboard</a>
+    </div>
+
+    <h1>✏️ Edit Session</h1>
+
+    <% if (success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <% if (errors && errors.length > 0) { %>
+      <div class="alert alert-error">
+        <% errors.forEach(error => { %>
+          <p><%= error %></p>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <div class="info-box">
+      <p><strong>Session ID:</strong> <%= session._id %></p>
+      <p><strong>Tutor Email:</strong> <%= session.tutorEmail %></p>
+      <p><strong>Created:</strong> <%= new Date(session.created_at).toLocaleString() %></p>
+    </div>
+
+    <form action="/admin/session/<%= session._id %>/update" method="POST">
+      <div class="form-group">
+        <label for="tutorName">Tutor Name *</label>
+        <input
+          type="text"
+          id="tutorName"
+          name="tutorName"
+          value="<%= session.tutorName %>"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="date">Session Date *</label>
+        <input
+          type="date"
+          id="date"
+          name="date"
+          value="<%= session.date.toISOString().split('T')[0] %>"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="location">Location *</label>
+        <input
+          type="text"
+          id="location"
+          name="location"
+          value="<%= session.location %>"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="hours">Hours *</label>
+        <input
+          type="number"
+          id="hours"
+          name="hours"
+          value="<%= session.hours %>"
+          min="0.5"
+          max="24"
+          step="0.5"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description *</label>
+        <textarea
+          id="description"
+          name="description"
+          required
+        ><%= session.description %></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status *</label>
+        <select id="status" name="status" required>
+          <option value="draft" <%= session.status === 'draft' ? 'selected' : '' %>>Draft</option>
+          <option value="submitted" <%= session.status === 'submitted' ? 'selected' : '' %>>Submitted</option>
+          <option value="approved" <%= session.status === 'approved' ? 'selected' : '' %>>Approved</option>
+          <option value="rejected" <%= session.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+        </select>
+      </div>
+
+      <div class="button-group">
+        <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+        <a href="/admin/dashboard" class="btn btn-secondary" style="text-align: center; text-decoration: none; display: inline-block;">Cancel</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

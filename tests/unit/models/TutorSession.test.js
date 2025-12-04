@@ -16,7 +16,7 @@ describe('TutorSession Model Tests', () => {
       googleId: 'test_google_id',
       name: 'Test Tutor',
       email: 'testtutor@example.com',
-      role: 'tutor'
+      role: 'tutor',
     });
   });
 
@@ -30,7 +30,7 @@ describe('TutorSession Model Tests', () => {
         location: 'Online',
         description: 'Helped student with mathematics homework problems',
         hours: 2.5,
-        status: 'draft'
+        status: 'draft',
       };
 
       const session = new TutorSession(validSession);
@@ -51,7 +51,7 @@ describe('TutorSession Model Tests', () => {
         date: new Date(),
         location: 'Room 101',
         description: 'Biology tutoring session on cell division',
-        hours: 1.5
+        hours: 1.5,
       });
 
       const savedSession = await session.save();
@@ -65,7 +65,7 @@ describe('TutorSession Model Tests', () => {
         date: new Date(),
         location: 'Online',
         description: 'Test session',
-        hours: 1
+        hours: 1,
       });
 
       await expect(session.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -78,7 +78,7 @@ describe('TutorSession Model Tests', () => {
         date: new Date(),
         location: 'Online',
         description: 'Test session',
-        hours: 1
+        hours: 1,
       });
 
       await expect(session.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -91,7 +91,7 @@ describe('TutorSession Model Tests', () => {
         tutorEmail: 'testtutor@example.com',
         location: 'Online',
         description: 'Test session',
-        hours: 1
+        hours: 1,
       });
 
       await expect(session.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -104,7 +104,7 @@ describe('TutorSession Model Tests', () => {
         tutorEmail: 'testtutor@example.com',
         date: new Date(),
         description: 'Test session',
-        hours: 1
+        hours: 1,
       });
 
       await expect(session.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -117,7 +117,7 @@ describe('TutorSession Model Tests', () => {
         tutorEmail: 'testtutor@example.com',
         date: new Date(),
         location: 'Online',
-        hours: 1
+        hours: 1,
       });
 
       await expect(session.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -130,7 +130,7 @@ describe('TutorSession Model Tests', () => {
         tutorEmail: 'testtutor@example.com',
         date: new Date(),
         location: 'Online',
-        description: 'Test session'
+        description: 'Test session',
       });
 
       await expect(session.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -144,7 +144,7 @@ describe('TutorSession Model Tests', () => {
         date: new Date(),
         location: 'Online',
         description: 'Test session',
-        hours: 0.3
+        hours: 0.3,
       });
 
       await expect(session.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -158,7 +158,7 @@ describe('TutorSession Model Tests', () => {
         date: new Date(),
         location: 'Online',
         description: 'Quick tutoring session',
-        hours: 0.5
+        hours: 0.5,
       });
 
       const savedSession = await session.save();
@@ -173,7 +173,7 @@ describe('TutorSession Model Tests', () => {
         date: new Date(),
         location: '  Room 202  ',
         description: 'Test session',
-        hours: 1
+        hours: 1,
       });
 
       const savedSession = await session.save();
@@ -188,7 +188,7 @@ describe('TutorSession Model Tests', () => {
         date: new Date(),
         location: 'Online',
         description: '  Test description  ',
-        hours: 1
+        hours: 1,
       });
 
       const savedSession = await session.save();
@@ -204,7 +204,7 @@ describe('TutorSession Model Tests', () => {
         location: 'Online',
         description: 'Test session',
         hours: 1,
-        status: 'invalid_status'
+        status: 'invalid_status',
       });
 
       await expect(session.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -222,7 +222,7 @@ describe('TutorSession Model Tests', () => {
           location: 'Online',
           description: `Session with status ${status}`,
           hours: 1,
-          status: status
+          status: status,
         });
 
         const savedSession = await session.save();
@@ -241,7 +241,7 @@ describe('TutorSession Model Tests', () => {
         location: 'Online',
         description: 'Test session',
         hours: 1,
-        status: 'draft'
+        status: 'draft',
       });
 
       const savedSession = await session.save();
@@ -263,7 +263,7 @@ describe('TutorSession Model Tests', () => {
         location: 'Online',
         description: 'Test session',
         hours: 1,
-        status: 'submitted'
+        status: 'submitted',
       });
 
       const savedSession = await session.save();
@@ -285,7 +285,7 @@ describe('TutorSession Model Tests', () => {
         location: 'Online',
         description: 'Test session',
         hours: 1,
-        status: 'submitted'
+        status: 'submitted',
       });
 
       const savedSession = await session.save();
@@ -304,13 +304,13 @@ describe('TutorSession Model Tests', () => {
         date: new Date(),
         location: 'Online',
         description: 'Test session',
-        hours: 1
+        hours: 1,
       });
 
       const savedSession = await session.save();
       const initialUpdatedAt = savedSession.updated_at;
 
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
       savedSession.hours = 2;
       const updatedSession = await savedSession.save();
 
@@ -326,13 +326,13 @@ describe('TutorSession Model Tests', () => {
         location: 'Online',
         description: 'Test session',
         hours: 1,
-        status: 'submitted'
+        status: 'submitted',
       });
 
       const savedSession = await session.save();
       const initialSubmittedAt = savedSession.submitted_at;
 
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
       savedSession.description = 'Updated description';
       const updatedSession = await savedSession.save();
 
@@ -349,7 +349,7 @@ describe('TutorSession Model Tests', () => {
         date: new Date(),
         location: 'Online',
         description: 'Test session',
-        hours: 1
+        hours: 1,
       });
 
       const populatedSession = await TutorSession.findById(session._id).populate('user_id');

@@ -1,5 +1,10 @@
 // tests/unit/middleware/auth.test.js
-const { isAuthenticated, isAdmin, isTutor, attachUserRole } = require('../../../src/middleware/auth');
+const {
+  isAuthenticated,
+  isAdmin,
+  isTutor,
+  attachUserRole,
+} = require('../../../src/middleware/auth');
 
 describe('Authentication Middleware Tests', () => {
   let req, res, next;
@@ -10,7 +15,7 @@ describe('Authentication Middleware Tests', () => {
       redirect: jest.fn(),
       status: jest.fn().mockReturnThis(),
       render: jest.fn(),
-      locals: {}
+      locals: {},
     };
     next = jest.fn();
   });
@@ -45,23 +50,24 @@ describe('Authentication Middleware Tests', () => {
       expect(next).toHaveBeenCalled();
     });
 
-    test('should return 403 when user is not admin', () => {
+    test('should redirect when user is not admin', () => {
       req.isAuthenticated = jest.fn().mockReturnValue(true);
       req.user = { role: 'tutor', name: 'Tutor User' };
 
       isAdmin(req, res, next);
 
-      expect(res.status).toHaveBeenCalledWith(403);
-      expect(res.render).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(302);
+      expect(res.redirect).toHaveBeenCalledWith('/');
       expect(next).not.toHaveBeenCalled();
     });
 
-    test('should return 403 when user is not authenticated', () => {
+    test('should redirect when user is not authenticated', () => {
       req.isAuthenticated = jest.fn().mockReturnValue(false);
 
       isAdmin(req, res, next);
 
-      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.status).toHaveBeenCalledWith(302);
+      expect(res.redirect).toHaveBeenCalledWith('/');
       expect(next).not.toHaveBeenCalled();
     });
   });
@@ -85,12 +91,13 @@ describe('Authentication Middleware Tests', () => {
       expect(next).toHaveBeenCalled();
     });
 
-    test('should return 403 when user is not authenticated', () => {
+    test('should redirect when user is not authenticated', () => {
       req.isAuthenticated = jest.fn().mockReturnValue(false);
 
       isTutor(req, res, next);
 
-      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.status).toHaveBeenCalledWith(302);
+      expect(res.redirect).toHaveBeenCalledWith('/');
       expect(next).not.toHaveBeenCalled();
     });
   });

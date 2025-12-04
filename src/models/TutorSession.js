@@ -60,11 +60,11 @@ const tutorSessionSchema = new mongoose.Schema({
   updated_at: {
     type: Date,
     default: Date.now,
-  }
+  },
 });
 
 // Update the updated_at timestamp before saving
-tutorSessionSchema.pre('save', function(next) {
+tutorSessionSchema.pre('save', function (next) {
   this.updated_at = Date.now();
 
   // Set submitted_at if status changes to submitted
@@ -73,7 +73,11 @@ tutorSessionSchema.pre('save', function(next) {
   }
 
   // Set reviewed_at if status changes to approved or rejected
-  if (this.isModified('status') && (this.status === 'approved' || this.status === 'rejected') && !this.reviewed_at) {
+  if (
+    this.isModified('status') &&
+    (this.status === 'approved' || this.status === 'rejected') &&
+    !this.reviewed_at
+  ) {
     this.reviewed_at = Date.now();
   }
 

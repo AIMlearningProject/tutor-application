@@ -5,7 +5,8 @@
  * Middleware to check if user is authenticated
  */
 function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
+  // Support both passport and session-based auth
+  if ((req.isAuthenticated && req.isAuthenticated()) || req.user) {
     return next();
   }
   res.redirect('/');
@@ -15,30 +16,34 @@ function isAuthenticated(req, res, next) {
  * Middleware to check if the authenticated user has admin role
  */
 function isAdmin(req, res, next) {
-  if (req.isAuthenticated() && req.user && req.user.role === 'admin') {
+  // Support both passport and session-based auth
+  if (
+    ((req.isAuthenticated && req.isAuthenticated()) || req.user) &&
+    req.user &&
+    req.user.role === 'admin'
+  ) {
     return next();
   }
 
-  // Return 403 Forbidden if not admin
-  res.status(403).render('error', {
-    message: 'Access denied. Admin privileges required.',
-    user: req.user
-  });
+  // Redirect non-admin users to home
+  res.status(302).redirect('/');
 }
 
 /**
  * Middleware to check if the authenticated user has tutor role
  */
 function isTutor(req, res, next) {
-  if (req.isAuthenticated() && req.user && (req.user.role === 'tutor' || req.user.role === 'admin')) {
+  // Support both passport and session-based auth
+  if (
+    ((req.isAuthenticated && req.isAuthenticated()) || req.user) &&
+    req.user &&
+    (req.user.role === 'tutor' || req.user.role === 'admin')
+  ) {
     return next();
   }
 
-  // Return 403 Forbidden if not tutor
-  res.status(403).render('error', {
-    message: 'Access denied. Tutor privileges required.',
-    user: req.user
-  });
+  // Redirect non-tutor users to home
+  res.status(302).redirect('/');
 }
 
 /**
@@ -60,5 +65,5 @@ module.exports = {
   isAuthenticated,
   isAdmin,
   isTutor,
-  attachUserRole
+  attachUserRole,
 };

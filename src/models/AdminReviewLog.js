@@ -35,7 +35,7 @@ const adminReviewLogSchema = new mongoose.Schema({
   admin_email: {
     type: String,
     required: true,
-  }
+  },
 });
 
 // Index for efficient queries

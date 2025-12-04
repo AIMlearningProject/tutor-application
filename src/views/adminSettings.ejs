@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - COPSA Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px 20px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .logo {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    .user-info {
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    .user-info h3 {
+      font-size: 1em;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .user-info p {
+      font-size: 0.85em;
+      color: #666;
+    }
+
+    .nav-menu {
+      list-style: none;
+    }
+
+    .nav-item {
+      margin-bottom: 10px;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 12px 15px;
+      color: #333;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+
+    .nav-link:hover {
+      background: #f0f0f0;
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 12px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-top: 20px;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #c82333;
+    }
+
+    .main-content {
+      margin-left: 260px;
+      flex: 1;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 1000px;
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      color: #667eea;
+      margin-bottom: 30px;
+      font-size: 2em;
+    }
+
+    .settings-section {
+      margin-bottom: 40px;
+      padding: 25px;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+
+    .settings-section h2 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.3em;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .setting-item {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .setting-item label {
+      display: block;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .setting-item p {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #667eea;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">⚙️ COPSA Admin</div>
+
+    <div class="user-info">
+      <h3><%= user.name %></h3>
+      <p><%= user.email %></p>
+      <p style="color: #667eea; font-weight: 600; margin-top: 5px;">Administrator</p>
+    </div>
+
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="/admin/dashboard" class="nav-link">📊 Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a href="/admin/dashboard" class="nav-link">📝 Sessions</a>
+      </li>
+      <li class="nav-item">
+        <a href="/admin/users" class="nav-link">👥 Users</a>
+      </li>
+      <li class="nav-item">
+        <a href="/admin/stats" class="nav-link">📈 Statistics</a>
+      </li>
+      <li class="nav-item">
+        <a href="/admin/export" class="nav-link">💾 Export</a>
+      </li>
+      <li class="nav-item">
+        <a href="/admin/settings" class="nav-link active">⚙️ Settings</a>
+      </li>
+    </ul>
+
+    <form action="/auth/logout" method="GET">
+      <button type="submit" class="logout-btn">
+        🚪 Logout
+      </button>
+    </form>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container">
+      <h1>⚙️ Application Settings</h1>
+
+      <% if (success) { %>
+        <div class="alert alert-success"><%= success %></div>
+      <% } %>
+
+      <% if (errors && errors.length > 0) { %>
+        <div class="alert alert-error">
+          <% errors.forEach(error => { %>
+            <p><%= error %></p>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <!-- General Settings -->
+      <div class="settings-section">
+        <h2>🔧 General Settings</h2>
+
+        <div class="setting-item">
+          <label>Application Name</label>
+          <p>The name displayed across the application</p>
+          <input type="text" value="COPSA Tutor Management" readonly>
+        </div>
+
+        <div class="setting-item">
+          <label>Admin Email</label>
+          <p>Primary administrator email address</p>
+          <input type="email" value="<%= user.email %>" readonly>
+        </div>
+
+        <div class="setting-item">
+          <label>Session Approval Required</label>
+          <p>Require admin approval before sessions are marked as approved</p>
+          <label class="toggle-switch">
+            <input type="checkbox" checked disabled>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Email Settings -->
+      <div class="settings-section">
+        <h2>📧 Email Notifications</h2>
+
+        <div class="setting-item">
+          <label>Send Email Notifications</label>
+          <p>Enable email notifications for tutors</p>
+          <label class="toggle-switch">
+            <input type="checkbox" checked disabled>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <label>Notification Events</label>
+          <p>Events that trigger email notifications</p>
+          <div style="margin-top: 10px;">
+            <label><input type="checkbox" checked disabled> Session Approved</label><br>
+            <label><input type="checkbox" checked disabled> Session Rejected</label><br>
+            <label><input type="checkbox" checked disabled> Session Submitted (Admin)</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export Settings -->
+      <div class="settings-section">
+        <h2>💾 Export Settings</h2>
+
+        <div class="setting-item">
+          <label>Default Export Format</label>
+          <p>Format used for data exports</p>
+          <select disabled>
+            <option>CSV (Excel Compatible)</option>
+            <option>JSON</option>
+            <option>PDF</option>
+          </select>
+        </div>
+
+        <div class="setting-item">
+          <label>Include Review Notes in Export</label>
+          <p>Include admin review notes when exporting sessions</p>
+          <label class="toggle-switch">
+            <input type="checkbox" checked disabled>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- System Info -->
+      <div class="settings-section">
+        <h2>ℹ️ System Information</h2>
+
+        <div class="setting-item">
+          <label>Application Version</label>
+          <p>1.0.0</p>
+        </div>
+
+        <div class="setting-item">
+          <label>Node.js Version</label>
+          <p><%= process.version %></p>
+        </div>
+
+        <div class="setting-item">
+          <label>Environment</label>
+          <p><%= process.env.NODE_ENV || 'development' %></p>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <button class="btn btn-primary" disabled>💾 Save Settings (Coming Soon)</button>
+        <p style="color: #666; font-size: 0.9em; margin-top: 10px;">
+          Note: Settings management is currently read-only. Advanced configuration options will be available in a future update.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

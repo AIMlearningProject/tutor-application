@@ -13,15 +13,15 @@ router.get('/', isAuthenticated, isTutor, async (req, res) => {
     const errors = req.session.errors || [];
     req.session.errors = null; // Clear errors after displaying
 
-    res.render('tutorForm', { tutorSessions, errors });
+    res.render('tutorForm', { user: req.user, tutorSessions, errors });
   } catch (err) {
     console.error('Error retrieving tutor sessions:', err);
-    res.render('tutorForm', { tutorSessions: [], errors: [] });
+    res.render('tutorForm', { user: req.user, tutorSessions: [], errors: [] });
   }
 });
 
 // Handle tutor form submission (create new session as draft)
-router.post('/log', isAuthenticated, isTutor, validateTutorSession, async (req, res) => {
+router.post('/session', isAuthenticated, isTutor, validateTutorSession, async (req, res) => {
   const { date, location, description, hours } = req.body;
 
   // Create a new tutor session document with data from the form
@@ -33,13 +33,12 @@ router.post('/log', isAuthenticated, isTutor, validateTutorSession, async (req, 
     location,
     description,
     hours,
-    status: 'draft' // Start as draft
+    status: 'draft', // Start as draft
   });
 
   try {
     await newSession.save();
-    req.session.success = 'Session saved as draft successfully!';
-    res.redirect('/tutor');
+    res.status(302).redirect('/tutor');
   } catch (err) {
     console.error('Error saving session:', err);
     req.session.errors = ['Error saving session. Please try again.'];
@@ -48,27 +47,28 @@ router.post('/log', isAuthenticated, isTutor, validateTutorSession, async (req, 
 });
 
 // Submit a draft session for admin review
-router.post('/submit/:id', isAuthenticated, isTutor, async (req, res) => {
+router.post('/session/:id/submit', isAuthenticated, isTutor, async (req, res) => {
   try {
     const session = await TutorSession.findOne({
       _id: req.params.id,
       user_id: req.user._id,
-      status: 'draft'
     });
 
     if (!session) {
-      req.session.errors = ['Session not found or already submitted'];
-      return res.redirect('/tutor');
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    if (session.status !== 'draft') {
+      return res.status(400).json({ error: 'Only draft sessions can be submitted' });
     }
 
     session.status = 'submitted';
     await session.save();
 
-    // Send email notification to admin
-    sendEmailToAdmin(session);
+    // Send email notification to admin (fire and forget)
+    sendEmailToAdmin(session).catch((err) => console.error('Email send error:', err));
 
-    req.session.success = 'Session submitted for review!';
-    res.redirect('/tutor');
+    res.status(302).redirect('/tutor');
   } catch (err) {
     console.error('Error submitting session:', err);
     req.session.errors = ['Error submitting session. Please try again.'];
@@ -77,53 +77,59 @@ router.post('/submit/:id', isAuthenticated, isTutor, async (req, res) => {
 });
 
 // Edit a draft session
-router.post('/edit/:id', isAuthenticated, isTutor, validateTutorSession, async (req, res) => {
-  const { date, location, description, hours } = req.body;
+router.post(
+  '/session/:id/update',
+  isAuthenticated,
+  isTutor,
+  validateTutorSession,
+  async (req, res) => {
+    const { date, location, description, hours } = req.body;
 
+    try {
+      const session = await TutorSession.findOne({
+        _id: req.params.id,
+        user_id: req.user._id,
+        status: 'draft',
+      });
+
+      if (!session) {
+        return res.status(400).json({ error: 'Session not found or cannot be edited' });
+      }
+
+      // Update session fields
+      session.date = new Date(date);
+      session.location = location;
+      session.description = description;
+      session.hours = hours;
+
+      await session.save();
+      res.status(302).redirect('/tutor');
+    } catch (err) {
+      console.error('Error updating session:', err);
+      req.session.errors = ['Error updating session. Please try again.'];
+      res.redirect('/tutor');
+    }
+  },
+);
+
+// Delete a draft session
+router.post('/session/:id/delete', isAuthenticated, isTutor, async (req, res) => {
   try {
     const session = await TutorSession.findOne({
       _id: req.params.id,
       user_id: req.user._id,
-      status: 'draft'
     });
 
     if (!session) {
-      req.session.errors = ['Session not found or cannot be edited'];
-      return res.redirect('/tutor');
+      return res.status(404).json({ error: 'Session not found' });
     }
 
-    // Update session fields
-    session.date = new Date(date);
-    session.location = location;
-    session.description = description;
-    session.hours = hours;
-
-    await session.save();
-    req.session.success = 'Session updated successfully!';
-    res.redirect('/tutor');
-  } catch (err) {
-    console.error('Error updating session:', err);
-    req.session.errors = ['Error updating session. Please try again.'];
-    res.redirect('/tutor');
-  }
-});
-
-// Delete a draft session
-router.post('/delete/:id', isAuthenticated, isTutor, async (req, res) => {
-  try {
-    const result = await TutorSession.deleteOne({
-      _id: req.params.id,
-      user_id: req.user._id,
-      status: 'draft'
-    });
-
-    if (result.deletedCount === 0) {
-      req.session.errors = ['Session not found or cannot be deleted'];
-    } else {
-      req.session.success = 'Session deleted successfully!';
+    if (session.status !== 'draft') {
+      return res.status(400).json({ error: 'Only draft sessions can be deleted' });
     }
 
-    res.redirect('/tutor');
+    await TutorSession.deleteOne({ _id: req.params.id });
+    res.status(302).redirect('/tutor');
   } catch (err) {
     console.error('Error deleting session:', err);
     req.session.errors = ['Error deleting session. Please try again.'];

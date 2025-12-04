@@ -14,14 +14,14 @@ describe('AdminReviewLog Model Tests', () => {
       googleId: 'admin_google',
       name: 'Admin User',
       email: 'admin@example.com',
-      role: 'admin'
+      role: 'admin',
     });
 
     tutor = await User.create({
       googleId: 'tutor_google',
       name: 'Tutor User',
       email: 'tutor@example.com',
-      role: 'tutor'
+      role: 'tutor',
     });
 
     session = await TutorSession.create({
@@ -32,7 +32,7 @@ describe('AdminReviewLog Model Tests', () => {
       location: 'Online',
       description: 'Test session',
       hours: 1,
-      status: 'submitted'
+      status: 'submitted',
     });
   });
 
@@ -44,7 +44,7 @@ describe('AdminReviewLog Model Tests', () => {
         action: 'approved',
         note: 'Good work',
         admin_name: admin.name,
-        admin_email: admin.email
+        admin_email: admin.email,
       });
 
       const savedLog = await log.save();
@@ -59,7 +59,7 @@ describe('AdminReviewLog Model Tests', () => {
         entry_id: session._id,
         action: 'rejected',
         admin_name: admin.name,
-        admin_email: admin.email
+        admin_email: admin.email,
       });
 
       const savedLog = await log.save();
@@ -72,7 +72,7 @@ describe('AdminReviewLog Model Tests', () => {
         entry_id: session._id,
         action: 'approved',
         admin_name: 'Admin',
-        admin_email: 'admin@example.com'
+        admin_email: 'admin@example.com',
       });
 
       await expect(log.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -83,7 +83,7 @@ describe('AdminReviewLog Model Tests', () => {
         admin_id: admin._id,
         action: 'approved',
         admin_name: admin.name,
-        admin_email: admin.email
+        admin_email: admin.email,
       });
 
       await expect(log.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -94,7 +94,7 @@ describe('AdminReviewLog Model Tests', () => {
         admin_id: admin._id,
         entry_id: session._id,
         admin_name: admin.name,
-        admin_email: admin.email
+        admin_email: admin.email,
       });
 
       await expect(log.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -106,7 +106,7 @@ describe('AdminReviewLog Model Tests', () => {
         entry_id: session._id,
         action: 'invalid',
         admin_name: admin.name,
-        admin_email: admin.email
+        admin_email: admin.email,
       });
 
       await expect(log.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -119,7 +119,7 @@ describe('AdminReviewLog Model Tests', () => {
         action: 'approved',
         note: '  Good work  ',
         admin_name: admin.name,
-        admin_email: admin.email
+        admin_email: admin.email,
       });
 
       const savedLog = await log.save();
