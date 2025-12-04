@@ -10,12 +10,14 @@ A web application for COPSA tutors to log their tutoring hours and for administr
 ## Overview
 
 This application allows tutors to:
+
 - Log in via Google OAuth
 - Submit tutoring session entries with details (date, location, description, hours)
 - Track the status of their submissions (draft, submitted, approved, rejected)
 - Switch between English and Finnish languages
 
 Administrators can:
+
 - View all tutor submissions
 - Approve or reject tutoring entries
 - Export data for reporting
@@ -32,6 +34,33 @@ Administrators can:
 - **Admin Dashboard**: Comprehensive overview of all tutoring sessions
 - **Audit Logging**: Complete history of admin review actions
 - **Responsive Design**: Mobile-friendly interface
+
+## Screenshots
+
+### Landing Page & Authentication
+
+![Landing Page](Screenshot_8.jpg)
+_The landing page with Google OAuth authentication_
+
+### Tutor Dashboard
+
+![Tutor Dashboard](Screenshot_11.jpg)
+_Tutor dashboard showing session management and submission tracking_
+
+### Session Submission Form
+
+![Session Form](Screenshot_12.jpg)
+_Detailed form for logging tutoring sessions with validation_
+
+### Admin Dashboard
+
+![Admin Dashboard](Screenshot_13.jpg)
+_Administrator dashboard with session review and filtering options_
+
+### Session Review & Approval
+
+![Session Review](Screenshot_14.jpg)
+_Admin interface for reviewing and approving/rejecting submissions_
 
 ## Technology Stack
 
@@ -56,12 +85,14 @@ Before running this application, ensure you have:
 ## Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd Tutor-Application--main
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
@@ -69,11 +100,13 @@ Before running this application, ensure you have:
 3. **Configure environment variables**
 
    Copy the `.env` file and update with your credentials:
+
    ```bash
    cp .env .env.local
    ```
 
    Edit `.env` with your actual values:
+
    ```env
    # Server Configuration
    PORT=3000
@@ -99,7 +132,6 @@ Before running this application, ensure you have:
    ```
 
 4. **Set up Google OAuth**
-
    - Go to [Google Cloud Console](https://console.cloud.google.com/)
    - Create a new project or select existing one
    - Enable Google+ API
@@ -110,6 +142,7 @@ Before running this application, ensure you have:
 5. **Set up MongoDB**
 
    Option A - Local MongoDB:
+
    ```bash
    # Start MongoDB service
    mongod --dbpath=/path/to/data/directory
@@ -133,26 +166,31 @@ The application will be available at `http://localhost:3000`
 ### Testing
 
 Run all tests:
+
 ```bash
 npm test
 ```
 
 Run tests with watch mode:
+
 ```bash
 npm run test:watch
 ```
 
 Run unit tests only:
+
 ```bash
 npm run test:unit
 ```
 
 Run integration tests only:
+
 ```bash
 npm run test:integration
 ```
 
 View test coverage:
+
 ```bash
 npm test
 # Coverage report will be in ./coverage directory
@@ -201,6 +239,7 @@ Tutor-Application--main/
 ## Data Models
 
 ### User
+
 ```javascript
 {
   googleId: String,           // Google OAuth ID
@@ -214,6 +253,7 @@ Tutor-Application--main/
 ```
 
 ### TutorSession
+
 ```javascript
 {
   user_id: ObjectId,          // Reference to User
@@ -233,6 +273,7 @@ Tutor-Application--main/
 ```
 
 ### AdminReviewLog
+
 ```javascript
 {
   admin_id: ObjectId,         // Reference to admin User
@@ -246,11 +287,13 @@ Tutor-Application--main/
 ## API Routes
 
 ### Authentication Routes (`/auth`)
+
 - `GET /auth/google` - Initiate Google OAuth login
 - `GET /auth/google/callback` - Google OAuth callback
 - `GET /auth/logout` - Logout user
 
 ### Tutor Routes (`/tutor`)
+
 - `GET /tutor/sessions` - View tutor's own sessions
 - `POST /tutor/sessions` - Create new session
 - `PUT /tutor/sessions/:id` - Update session (draft only)
@@ -258,6 +301,7 @@ Tutor-Application--main/
 - `POST /tutor/sessions/:id/submit` - Submit session for review
 
 ### Admin Routes (`/admin`)
+
 - `GET /admin/sessions` - View all sessions
 - `GET /admin/sessions/:id` - View session details
 - `POST /admin/sessions/:id/approve` - Approve session
@@ -265,6 +309,7 @@ Tutor-Application--main/
 - `GET /admin/export` - Export sessions to CSV/Excel
 
 ### General Routes
+
 - `GET /` - Landing page
 - `GET /dashboard` - User dashboard (role-based)
 - `GET /language/:lang` - Switch language (en/fi)
@@ -277,6 +322,7 @@ The application supports English and Finnish languages. Language files are locat
 - `fi.json` - Finnish translations
 
 Users can switch languages using the language selector in the UI. Language preference is:
+
 1. Stored in user profile (if logged in)
 2. Stored in cookie (if not logged in)
 3. Auto-detected from browser settings
@@ -284,6 +330,7 @@ Users can switch languages using the language selector in the UI. Language prefe
 ## User Roles
 
 ### Tutor
+
 - Log tutoring sessions
 - Submit sessions for approval
 - View own session history
@@ -291,6 +338,7 @@ Users can switch languages using the language selector in the UI. Language prefe
 - Edit/delete draft sessions
 
 ### Administrator
+
 - View all tutor sessions
 - Approve or reject submissions
 - Add review notes
@@ -301,11 +349,13 @@ Users can switch languages using the language selector in the UI. Language prefe
 ## Email Notifications
 
 The application sends automated emails for:
+
 - New session submissions (to admin)
 - Session approval (to tutor)
 - Session rejection (to tutor)
 
 Configure email settings in `.env`:
+
 ```env
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_specific_password
@@ -328,6 +378,7 @@ EMAIL_PASS=your_app_specific_password
 ### Environment Variables for Production
 
 Update `.env` for production:
+
 ```env
 NODE_ENV=production
 PORT=3000
@@ -339,6 +390,7 @@ MONGO_URI=<production-mongodb-uri>
 ### Deployment Platforms
 
 **Option 1 - Heroku**
+
 ```bash
 heroku create copsa-tutor-app
 heroku config:set SESSION_SECRET=<secret>
@@ -349,11 +401,13 @@ git push heroku main
 ```
 
 **Option 2 - Render**
+
 - Connect GitHub repository
 - Set environment variables in Render dashboard
 - Deploy automatically on git push
 
 **Option 3 - Docker**
+
 ```dockerfile
 FROM node:14
 WORKDIR /app
@@ -367,16 +421,19 @@ CMD ["npm", "start"]
 ## Development Workflow
 
 1. **Create a feature branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 2. **Make changes and test**
+
    ```bash
    npm test
    ```
 
 3. **Commit changes**
+
    ```bash
    git add .
    git commit -m "Description of changes"
@@ -390,21 +447,25 @@ CMD ["npm", "start"]
 ## Troubleshooting
 
 ### MongoDB Connection Issues
+
 - Ensure MongoDB is running: `mongod`
 - Check `MONGO_URI` in `.env`
 - Verify network connectivity for cloud MongoDB
 
 ### Google OAuth Errors
+
 - Verify Client ID and Secret in `.env`
 - Check authorized redirect URIs in Google Console
 - Ensure callback URL matches `.env` configuration
 
 ### Session Issues
+
 - Verify `SESSION_SECRET` is set
 - Clear browser cookies
 - Check session configuration in `app.js`
 
 ### Email Not Sending
+
 - Verify email credentials in `.env`
 - Use app-specific password for Gmail
 - Check spam folder for test emails
@@ -425,6 +486,7 @@ ISC
 ## Support
 
 For issues, questions, or contributions, please:
+
 - Open an issue in the repository
 - Contact the development team
 - Refer to `softwareplan.md` for design decisions
