@@ -85,7 +85,7 @@ Before running this application, ensure you have:
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/AIMlearningProject/tutor-application/tree/main
+   git clone https://github.com/AIMlearningProject/tutor-application/
    cd Tutor-Application--main
    ```
 
